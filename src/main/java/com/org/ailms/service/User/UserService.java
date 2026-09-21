@@ -6,4 +6,5 @@ import com.org.ailms.dto.UserResponse;
 public interface UserService {
     public UserResponse addUser(UserRequest req);
     public UserResponse findUserById(Long userId);
+    public String deleteUser(Long userId);
 }

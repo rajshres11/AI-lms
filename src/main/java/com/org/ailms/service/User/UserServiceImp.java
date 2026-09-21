@@ -51,4 +51,9 @@ public class UserServiceImp implements UserService{
         res.setUpdatedAt(saved.getUpdatedAt());
         return res;
     }
+
+    public String deleteUser(Long userId){
+        userRepository.deleteById(userId);
+        return "User deleted";
+    }
 }
