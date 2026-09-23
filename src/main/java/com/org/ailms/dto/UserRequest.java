@@ -16,6 +16,7 @@ public class UserRequest {
     @Email 
     @Column (nullable = false,unique = true)
     private String email;
+    private String password;
     private String phone;
     @Enumerated (EnumType.STRING)
     private Role role;
@@ -32,6 +33,12 @@ public class UserRequest {
     }
     public void setEmail(String email) {
         this.email = email;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
     }
     public String getPhone() {
         return phone;
