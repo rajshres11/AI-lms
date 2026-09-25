@@ -18,7 +18,6 @@ import com.org.ailms.dto.UserResponse;
 import com.org.ailms.service.User.UserService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/user")
