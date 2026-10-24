@@ -12,4 +12,16 @@ public class GlobalHandler {
     public ResponseEntity<String> UserNotFoundExceptionHandler(UserNotFoundException e){
         return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler (CourseNotFoundException.class)
+    public ResponseEntity<String> CourseNotFoundExceptionHandler(CourseNotFoundException e){
+        return  new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler (RuntimeException.class)
+    public ResponseEntity<String> 
+    RuntimeExceptionHandler(RuntimeException e){
+        return  new ResponseEntity<>(e.getMessage(),HttpStatus.UNAUTHORIZED);
+    }
+
 }

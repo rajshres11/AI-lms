@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,10 +18,9 @@ import com.org.ailms.dto.UserRequest;
 import com.org.ailms.dto.UserResponse;
 import com.org.ailms.service.User.UserService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/v1/user")
 public class UserController {
 
     private final UserService userService;
@@ -36,7 +36,7 @@ public class UserController {
                 HttpStatus.CREATED);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/getall")
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
         List<UserResponse> userList = userService.getAllUsers();
 
@@ -46,7 +46,7 @@ public class UserController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping("user/{userId}")
+    @GetMapping("get/{userId}")
     public ResponseEntity<ApiResponse<UserResponse>> findByUserId(@PathVariable Long userId) {
         UserResponse res = userService.getUserById(userId);
         return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "User data fetched", res), HttpStatus.OK);

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.org.ailms.dto.UserRequest;
 import com.org.ailms.dto.UserResponse;
 import com.org.ailms.entity.User;
+import com.org.ailms.enums.Role;
 import com.org.ailms.exception.UserNotFoundException;
 import com.org.ailms.repository.UserRepository;
 
@@ -28,7 +29,11 @@ public class UserServiceImp implements UserService {
         user.setEmail(req.getEmail());
         user.setPassword(req.getPassword());
         user.setPhone(req.getPhone());
-        user.setRole(req.getRole());
+        if(req.getRole().equals(Role.ADMIN)){
+            throw new RuntimeException("You cannot be create admin");
+        }else{
+            user.setRole(req.getRole());
+        }
         user.setCreatedAt(LocalDateTime.now());
         User saved = userRepository.save(user);
 
