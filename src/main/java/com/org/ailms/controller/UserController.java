@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 @RequestMapping("/user")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -52,7 +52,7 @@ public class UserController {
         return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "User data fetched", res), HttpStatus.OK);
     }
 
-    @PutMapping ("/update/{userId}")
+    @PutMapping("/update/{userId}")
     public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable Long userId,
             @RequestBody UserRequest req) {
         UserResponse res = userService.updateUser(userId, req);
