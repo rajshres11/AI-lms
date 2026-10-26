@@ -27,7 +27,4 @@ public class UserRequest {
     @NotBlank 
     private String password;
     private String phone;
-    @NotEmpty 
-    @Enumerated (EnumType.STRING)
-    private Role role;
 }

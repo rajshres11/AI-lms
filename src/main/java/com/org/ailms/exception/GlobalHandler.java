@@ -24,4 +24,9 @@ public class GlobalHandler {
         return  new ResponseEntity<>(e.getMessage(),HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler (LessonNotFoundException.class)
+    public ResponseEntity<String> LessonNotFoundExceptionHandler(LessonNotFoundException e){
+        return  new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
+    }
+
 }

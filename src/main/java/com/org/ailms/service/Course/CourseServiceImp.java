@@ -67,13 +67,13 @@ public class CourseServiceImp implements CourseService{
     @Override 
     public CourseResponse updateCourse(Long courseId,CourseRequest cr){
         Course saved = courseRepository.findById(courseId).orElseThrow(()-> new CourseNotFoundException());
-        Course course = new Course();
-        course.setTitle(cr.getTitle());
-        course.setDescription(cr.getDescription());
-        course.setPrice(cr.getPrice());
-        course.setUpdatedAt(LocalDateTime.now());
+        
+        saved.setTitle(cr.getTitle());
+        saved.setDescription(cr.getDescription());
+        saved.setPrice(cr.getPrice());
+        saved.setUpdatedAt(LocalDateTime.now());
 
-        Course updated = courseRepository.save(course);
+        Course updated = courseRepository.save(saved);
         CourseResponse crs = new CourseResponse();
         crs.setCourseId(courseId);
         crs.setTitle(updated.getTitle());

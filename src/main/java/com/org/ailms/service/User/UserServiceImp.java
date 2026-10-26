@@ -4,7 +4,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.org.ailms.dto.UserRequest;
 import com.org.ailms.dto.UserResponse;
@@ -16,38 +22,15 @@ import com.org.ailms.repository.UserRepository;
 @Service
 public class UserServiceImp implements UserService {
 
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    public UserServiceImp(UserRepository userRepository) {
+    public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
-    public UserResponse createUser(UserRequest req) {
-        User user = new User();
-        user.setName(req.getName());
-        user.setEmail(req.getEmail());
-        user.setPassword(req.getPassword());
-        user.setPhone(req.getPhone());
-        if(req.getRole().equals(Role.ADMIN)){
-            throw new RuntimeException("You cannot be create admin");
-        }else{
-            user.setRole(req.getRole());
-        }
-        user.setCreatedAt(LocalDateTime.now());
-        User saved = userRepository.save(user);
-
-        UserResponse res = new UserResponse();
-        res.setUserId(saved.getUserId());
-        res.setName(saved.getName());
-        res.setEmail(saved.getEmail());
-        res.setPhone(saved.getPhone());
-        res.setRole(saved.getRole());
-        res.setCreatedAt(saved.getCreatedAt());
-        return res;
-
-    }
-
+    @Override 
     public List<UserResponse> getAllUsers() {
         List<User> savedUsers = userRepository.findAll();
 
@@ -58,7 +41,8 @@ public class UserServiceImp implements UserService {
             res.setName(saved.getName());
             res.setEmail(saved.getEmail());
             res.setPhone(saved.getPhone());
-            res.setRole(saved.getRole());
+            String role = saved.getRole().toString();
+            res.setRole(role);
 
             resList.add(res);
         }
@@ -67,14 +51,23 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserResponse getUserById(Long userId) {
-        User saved = userRepository.findById(userId)
-                        .orElseThrow(() -> new UserNotFoundException());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = authentication.getName();
+
+        User saved = userRepository.findByEmail(username).orElseThrow(()-> new UserNotFoundException());
+
+        if(saved.getRole().equals(Role.STUDENT)){
+            if(!saved.getUserId().equals(userId)){
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"You cant access antoher user data");
+            }
+        }
         UserResponse res = new UserResponse();
         res.setUserId(saved.getUserId());
         res.setName(saved.getName());
         res.setEmail(saved.getEmail());
-        res.setPhone(saved.getPhone());
-        res.setRole(saved.getRole());
+        String role = saved.getRole().toString();
+        res.setRole(role);
         return res;
     }
 
@@ -84,9 +77,9 @@ public class UserServiceImp implements UserService {
                         .orElseThrow(() -> new UserNotFoundException());
         saved.setName(req.getName());
         saved.setEmail(req.getEmail());
-        saved.setPassword(req.getPassword());
-        saved.setPhone(req.getPassword());
-        saved.setRole(req.getRole());
+        saved.setPassword(passwordEncoder.encode(req.getPassword()));
+        saved.setPhone(req.getPhone());
+        saved.setRole(Role.STUDENT);
         saved.setUpdatedAt(LocalDateTime.now());
 
         User updated = userRepository.save(saved);
@@ -96,7 +89,7 @@ public class UserServiceImp implements UserService {
         res.setName(updated.getName());
         res.setEmail(updated.getEmail());
         res.setPhone(updated.getPhone());
-        res.setRole(updated.getRole());
+        res.setRole("STUDENT");
         res.setUpdatedAt(updated.getUpdatedAt());
         return res;
     }

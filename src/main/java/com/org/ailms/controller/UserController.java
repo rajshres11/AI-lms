@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,12 +28,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse<UserResponse>> addUser(@RequestBody UserRequest req) {
-        UserResponse res = userService.createUser(req);
-        return new ResponseEntity<>(new ApiResponse<>(HttpStatus.CREATED.value(), "User created", res),
-                HttpStatus.CREATED);
-    }
 
     @GetMapping("/getall")
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
