@@ -30,7 +30,7 @@ public class UserServiceImp implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override 
+    @Override
     public List<UserResponse> getAllUsers() {
         List<User> savedUsers = userRepository.findAll();
 
@@ -43,6 +43,7 @@ public class UserServiceImp implements UserService {
             res.setPhone(saved.getPhone());
             String role = saved.getRole().toString();
             res.setRole(role);
+            res.setCreatedAt(saved.getCreatedAt());
 
             resList.add(res);
         }
@@ -55,26 +56,42 @@ public class UserServiceImp implements UserService {
 
         String username = authentication.getName();
 
-        User saved = userRepository.findByEmail(username).orElseThrow(()-> new UserNotFoundException());
+        User currentUser = userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundException());
 
-        if(saved.getRole().equals(Role.STUDENT)){
-            if(!saved.getUserId().equals(userId)){
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"You cant access antoher user data");
+        if (currentUser.getRole().equals(Role.STUDENT)) {
+            if (!currentUser.getUserId().equals(userId)) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't access antoher user data");
             }
         }
+        User saved = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new UserNotFoundException());
+
         UserResponse res = new UserResponse();
+
         res.setUserId(saved.getUserId());
         res.setName(saved.getName());
         res.setEmail(saved.getEmail());
-        String role = saved.getRole().toString();
-        res.setRole(role);
+        res.setRole(saved.getRole().toString());
+        res.setCreatedAt(saved.getCreatedAt());
+
         return res;
     }
 
     @Override
     public UserResponse updateUser(Long userId, UserRequest req) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundException());
+        if (currentUser.getRole().equals(Role.STUDENT)
+                && !currentUser.getUserId().equals(userId)) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You can't update another user's data");
+        }
         User saved = userRepository.findById(userId)
-                        .orElseThrow(() -> new UserNotFoundException());
+                .orElseThrow(() -> new UserNotFoundException());
         saved.setName(req.getName());
         saved.setEmail(req.getEmail());
         saved.setPassword(passwordEncoder.encode(req.getPassword()));
@@ -89,7 +106,6 @@ public class UserServiceImp implements UserService {
         res.setName(updated.getName());
         res.setEmail(updated.getEmail());
         res.setPhone(updated.getPhone());
-        res.setRole("STUDENT");
         res.setUpdatedAt(updated.getUpdatedAt());
         return res;
     }

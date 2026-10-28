@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,16 +38,29 @@ public class EnrollmentServiceImp implements EnrollmentService {
     @Transactional
     public EnrollmentResponse newEnrollment(EnrollmentRequest er) {
         Enrollment enrollment = new Enrollment();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User student = userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundException());
+
         Course course = courseRepository.findById(er.getCourseId()).orElseThrow(() -> new CourseNotFoundException());
         enrollment.setCourse(course);
         enrollment.setCreatedAt(LocalDateTime.now());
         enrollment.setStatus(Status.ENROLLED);
         enrollment.setEnrolledAt(LocalDateTime.now());
 
-        User student = userRepository.findById(er.getUserId()).orElseThrow(() -> new UserNotFoundException());
+        if (enrollmentRepository.existsByStudent_UserIdAndCourse_CourseId(student.getUserId(),
+                course.getCourseId()) == true) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Student already enrolled to this course");
+        }
+
+        // User student = userRepository.findById(er.getUserId()).orElseThrow(() -> new
+        // UserNotFoundException());
 
         if (student.getRole().equals(Role.ADMIN)) {
-            throw new RuntimeException();
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Admin cannot enroll in a course");
         }
         enrollment.setStudent(student);
         Enrollment saved = enrollmentRepository.save(enrollment);
@@ -85,7 +99,7 @@ public class EnrollmentServiceImp implements EnrollmentService {
         return ers;
     }
 
-    @Override 
+    @Override
     public List<EnrollmentResponse> getAllEnrollment() {
         List<Enrollment> enrollments = enrollmentRepository.findAll();
         List<EnrollmentResponse> ersList = new ArrayList<>();
@@ -102,11 +116,11 @@ public class EnrollmentServiceImp implements EnrollmentService {
         return ersList;
     }
 
-    @Override 
-    public List<EnrollmentResponse> getAllEnrollmentByUserId(Long userId){
+    @Override
+    public List<EnrollmentResponse> getAllEnrollmentByUserId(Long userId) {
         List<Enrollment> enrollments = enrollmentRepository.findByStudent_UserId(userId);
-        if(enrollments == null){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"No enrollment on this user till now");
+        if (enrollments == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No enrollment on this user till now");
         }
         List<EnrollmentResponse> ersList = new ArrayList<>();
         for (Enrollment e : enrollments) {

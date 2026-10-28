@@ -3,6 +3,7 @@ package com.org.ailms.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
@@ -12,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 @Entity 
@@ -26,12 +28,13 @@ public class Course {
     private String title;
     private String description;
     private Double price;
+    @Column (nullable = false)
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;   
     
-    @OneToMany (mappedBy = "course")
+    @OneToMany (mappedBy = "course",cascade = CascadeType.ALL)
     private List<Lesson> lessons;
 
-    @OneToMany 
+    @OneToMany (mappedBy = "course")
     private List<Enrollment> enrollments;
 }

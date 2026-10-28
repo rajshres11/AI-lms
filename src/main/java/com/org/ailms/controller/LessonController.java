@@ -18,6 +18,7 @@ import com.org.ailms.dto.LessonRequest;
 import com.org.ailms.dto.LessonResponse;
 import com.org.ailms.service.Lessson.LessonService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,7 +30,7 @@ public class LessonController {
 
     @PostMapping("/addLessonToCourse/{courseId}")
     public ResponseEntity<ApiResponse<LessonResponse>> createLesson(@PathVariable Long courseId,
-            @RequestBody LessonRequest lr) {
+           @Valid @RequestBody LessonRequest lr) {
 
         LessonResponse lrs = lessonService.addLessonToCourse(courseId,lr);
 
@@ -62,7 +63,7 @@ public class LessonController {
     @PutMapping("/update/{lessonId}")
     public ResponseEntity<ApiResponse<LessonResponse>> updateLesson(
             @PathVariable Long lessonId,
-            @RequestBody LessonRequest lr) {
+           @Valid @RequestBody LessonRequest lr) {
 
         LessonResponse lrs = lessonService.updateLesson(lessonId, lr);
 

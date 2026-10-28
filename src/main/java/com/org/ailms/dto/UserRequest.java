@@ -18,13 +18,17 @@ import lombok.Setter;
 @Setter 
 public class UserRequest {
     @NotNull 
+    @NotEmpty (message = "Name is mandatory")
     private String name;
     @Email 
-    @NotBlank 
+    @NotBlank (message = "Email is mandatory")
     @NotNull 
     private String email;
     @NotNull 
-    @NotBlank 
+    @NotBlank (message = "password is mandatory")
     private String password;
+    @NotNull 
+    @NotBlank 
+    @NotEmpty (message = "phone number is mandatory")
     private String phone;
 }

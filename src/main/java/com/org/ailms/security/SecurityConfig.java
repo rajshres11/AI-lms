@@ -7,12 +7,19 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtFilter jwtFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -24,6 +31,7 @@ public class SecurityConfig {
 
         return http
                 .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
 
@@ -31,8 +39,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/v3/api-docs/**"
-                        ).permitAll()
+                                "/v3/api-docs/**")
+                        .permitAll()
 
                         // Authentication APIs
                         .requestMatchers("/api/auth/**")
@@ -44,10 +52,10 @@ public class SecurityConfig {
 
                         // Student can create enrollment
                         .requestMatchers("/api/v1/enrollment/create")
-                        .hasAnyRole("STUDENT","ADMIN")
+                        .hasAnyRole("STUDENT", "ADMIN")
 
                         .requestMatchers("/api/v1/user/update/**")
-                        .hasAnyRole("ADMIN","STUDENT")
+                        .hasAnyRole("ADMIN", "STUDENT")
 
                         // Student + Admin can see user's enrollments
                         .requestMatchers("/api/v1/enrollment/user/**")
@@ -58,7 +66,7 @@ public class SecurityConfig {
                         .hasRole("ADMIN")
 
                         .requestMatchers("/api/v1/lesson/getlessonbycourseid/**")
-                        .hasAnyRole("ADMIN","STUDENT")
+                        .hasAnyRole("ADMIN", "STUDENT")
 
                         // Lesson - Admin
                         .requestMatchers("/api/v1/lesson/**")
@@ -66,9 +74,8 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/api/v1/course/**").hasAnyRole("ADMIN", "STUDENT")
 
-
                         .requestMatchers("/api/v1/course/getAll")
-                        .hasAnyRole("ADMIN","STUDENT")
+                        .hasAnyRole("ADMIN", "STUDENT")
 
                         // Course - Admin
                         .requestMatchers("/api/v1/course/**")
@@ -76,16 +83,15 @@ public class SecurityConfig {
 
                         // Everything else
                         .anyRequest()
-                        .authenticated()
-                )
+                        .authenticated())
 
-                .httpBasic(Customizer.withDefaults())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
     @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig){
+    AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) {
         return authConfig.getAuthenticationManager();
     }
-    
+
 }

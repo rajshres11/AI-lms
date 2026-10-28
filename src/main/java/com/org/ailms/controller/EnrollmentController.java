@@ -19,6 +19,7 @@ import com.org.ailms.dto.EnrollmentResponse;
 import com.org.ailms.dto.EnrollmentStatusRequest;
 import com.org.ailms.service.Enrollment.EnrollmentService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,7 +32,7 @@ public class EnrollmentController {
     // Create Enrollment
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<EnrollmentResponse>> newEnrollment(
-            @RequestBody EnrollmentRequest req) {
+          @Valid @RequestBody EnrollmentRequest req) {
 
         EnrollmentResponse res = enrollmentService.newEnrollment(req);
 

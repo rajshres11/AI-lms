@@ -10,10 +10,10 @@ import lombok.Setter;
 @Setter 
 public class LoginRequest {
     @Email 
-    @NotBlank 
+    @NotBlank (message = "use your registered mail id") 
     @NotNull 
     private String email;
     @NotNull 
-    @NotBlank 
+    @NotBlank (message = "password it compulsory")
     private String password;
 }

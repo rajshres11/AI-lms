@@ -17,6 +17,8 @@ import com.org.ailms.dto.UserRequest;
 import com.org.ailms.dto.UserResponse;
 import com.org.ailms.service.User.UserService;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -47,7 +49,7 @@ public class UserController {
 
     @PutMapping("/update/{userId}")
     public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable Long userId,
-            @RequestBody UserRequest req) {
+          @Valid @RequestBody UserRequest req) {
         UserResponse res = userService.updateUser(userId, req);
 
         return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "User updated", res), HttpStatus.OK);
