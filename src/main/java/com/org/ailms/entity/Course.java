@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -26,6 +27,8 @@ public class Course {
     private Long courseId;
     @Column (unique = true,nullable = false)
     private String title;
+    @Lob 
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
     private Double price;
     @Column (nullable = false)

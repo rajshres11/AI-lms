@@ -112,6 +112,10 @@ public class UserServiceImp implements UserService {
 
     @Override
     public void deleteUser(Long userId) {
-        userRepository.deleteById(userId);
+      User user =   userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException());
+      if(user.getRole() == Role.ADMIN){
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Contact master admin to remove you as a user");
+      }
+      userRepository.deleteById(userId);
     }
 }
