@@ -1,0 +1,24 @@
+
+# Git files
+.git
+.gitignore
+
+# Maven build output
+target/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Eclipse IDE files
+.classpath
+.project
+.settings/
+
+# IntelliJ IDE files
+.idea/
+*.iml
+
+# Operating system files
+.DS_Store
+Thumbs.db
