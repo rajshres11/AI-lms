@@ -8,9 +8,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AilmsApplication {
 
 	public static void main(String[] args) {
+		
+		SpringApplication.run(AilmsApplication.class, args);
 		// System.out.println("start" +" " +new BCryptPasswordEncoder().encode("Shresth123"));
 		// System.out.println("end");
-		SpringApplication.run(AilmsApplication.class, args);
 	}
 
 }
