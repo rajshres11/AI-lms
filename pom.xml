@@ -31,7 +31,7 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
-		<!-- Flyway -->
+		<!-- Flyway Migration-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-flyway</artifactId>
@@ -97,11 +97,18 @@
 		</dependency>
 
 		<!-- DevTools -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<optional>true</optional>
-		</dependency>
+		<build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+			<!-- it exclude from production -->
+            <configuration>
+                <excludeDevtools>true</excludeDevtools>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
 
 		<!-- MySQL -->
 		<dependency>
