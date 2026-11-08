@@ -24,15 +24,20 @@ public class LessonServiceImp implements LessonService {
     private final LessonRepository lessonRepository;
     private final CourseRepository courseRepository;
 
-    @Override 
-    @Transactional 
-    public LessonResponse addLessonToCourse(Long courseId,LessonRequest lr) {
+    @Override
+    @Transactional
+    public LessonResponse addLessonToCourse(Long courseId, LessonRequest lr) {
         Course course = courseRepository.findById(courseId)
-            .orElseThrow(() -> new CourseNotFoundException());
+                .orElseThrow(() -> new CourseNotFoundException());
+
+        Integer maxSequence = lessonRepository.findMaxSequenceByCourseId(courseId);
+
         Lesson lesson = new Lesson();
         lesson.setTitle(lr.getTitle());
         lesson.setContent(lr.getContent());
         lesson.setVideoUrl(lr.getVideoUrl());
+        // Automatically assign sequence
+        lesson.setSequenceNumber(maxSequence + 1);
         lesson.setCreatedAt(LocalDateTime.now());
         lesson.setCourse(course);
 
@@ -42,13 +47,14 @@ public class LessonServiceImp implements LessonService {
         lrs.setLessonId(saved.getLessonId());
         lrs.setTitle(saved.getTitle());
         lrs.setContent(saved.getContent());
+        lrs.setSequenceNumber(saved.getSequenceNumber());
         lrs.setVideoUrl(saved.getVideoUrl());
         lrs.setCreatedAt(saved.getCreatedAt());
 
         return lrs;
     }
-    
-    @Override 
+
+    @Override
     public List<LessonResponse> getAllLessons() {
         List<Lesson> lessons = lessonRepository.findAll();
         List<LessonResponse> lList = new ArrayList<>();
@@ -57,6 +63,7 @@ public class LessonServiceImp implements LessonService {
             lrs.setLessonId(l.getLessonId());
             lrs.setTitle(l.getTitle());
             lrs.setContent(l.getContent());
+            lrs.setSequenceNumber(l.getSequenceNumber());
             lrs.setVideoUrl(l.getVideoUrl());
             lrs.setCreatedAt(l.getCreatedAt());
             lList.add(lrs);
@@ -65,25 +72,43 @@ public class LessonServiceImp implements LessonService {
     }
 
     @Override 
-    public LessonResponse getLessonById(Long lessonId){
-        Lesson saved = lessonRepository.findById(lessonId).orElseThrow(()->new LessonNotFoundException());
+    public List<LessonResponse> getByCourse_CourseIdOrderBySequenceNumberAsc(Long courseId){
+        List<Lesson> lessons = lessonRepository.findByCourse_CourseIdOrderBySequenceNumberAsc(courseId);
+        List<LessonResponse> lList = new ArrayList<>();
+        for (Lesson l : lessons) {
+            LessonResponse lrs = new LessonResponse();
+            lrs.setLessonId(l.getLessonId());
+            lrs.setTitle(l.getTitle());
+            lrs.setContent(l.getContent());
+            lrs.setSequenceNumber(l.getSequenceNumber());
+            lrs.setVideoUrl(l.getVideoUrl());
+            lrs.setCreatedAt(l.getCreatedAt());
+            lList.add(lrs);
+        }
+        return lList;
+    }
+
+    @Override
+    public LessonResponse getLessonById(Long lessonId) {
+        Lesson saved = lessonRepository.findById(lessonId).orElseThrow(() -> new LessonNotFoundException());
         LessonResponse lrs = new LessonResponse();
         lrs.setLessonId(saved.getLessonId());
         lrs.setTitle(saved.getTitle());
         lrs.setContent(saved.getContent());
+        lrs.setSequenceNumber(saved.getSequenceNumber());
         lrs.setVideoUrl(saved.getVideoUrl());
         lrs.setCreatedAt(saved.getCreatedAt());
         return lrs;
     }
 
-    @Override 
-    public LessonResponse updateLesson(Long lessonId,LessonRequest lr){
-        Lesson saved = lessonRepository.findById(lessonId).orElseThrow(()-> new LessonNotFoundException());
+    @Override
+    public LessonResponse updateLesson(Long lessonId, LessonRequest lr) {
+        Lesson saved = lessonRepository.findById(lessonId).orElseThrow(() -> new LessonNotFoundException());
         saved.setTitle(lr.getTitle());
         saved.setContent(lr.getContent());
         saved.setVideoUrl(lr.getVideoUrl());
         saved.setUpdatedAt(LocalDateTime.now());
-        
+
         Lesson updated = lessonRepository.save(saved);
         LessonResponse lrs = new LessonResponse();
         lrs.setLessonId(updated.getLessonId());
@@ -93,15 +118,14 @@ public class LessonServiceImp implements LessonService {
         lrs.setUpdatedAt(updated.getUpdatedAt());
         return lrs;
     }
-    
-    @Override 
-    public void deleteLesson(Long lessonId){
+
+    @Override
+    public void deleteLesson(Long lessonId) {
         lessonRepository.deleteById(lessonId);
     }
 
-
-    @Override 
-    public List<LessonResponse> getLessonByCourseId(Long courseId){
+    @Override
+    public List<LessonResponse> getLessonByCourseId(Long courseId) {
         List<Lesson> lessons = lessonRepository.findByCourse_CourseId(courseId);
 
         List<LessonResponse> lList = new ArrayList<>();

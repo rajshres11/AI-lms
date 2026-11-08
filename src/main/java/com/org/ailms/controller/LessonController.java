@@ -26,67 +26,75 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LessonController {
 
-    private final LessonService lessonService;
+        private final LessonService lessonService;
 
-    @PostMapping("/addLessonToCourse/{courseId}")
-    public ResponseEntity<ApiResponse<LessonResponse>> createLesson(@PathVariable Long courseId,
-           @Valid @RequestBody LessonRequest lr) {
+        @PostMapping("/addLessonToCourse/{courseId}")
+        public ResponseEntity<ApiResponse<LessonResponse>> createLesson(@PathVariable Long courseId,
+                        @Valid @RequestBody LessonRequest lr) {
 
-        LessonResponse lrs = lessonService.addLessonToCourse(courseId,lr);
+                LessonResponse lrs = lessonService.addLessonToCourse(courseId, lr);
 
-        return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.CREATED.value(), "Lesson created", lrs),
-                HttpStatus.CREATED);
-    }
+                return new ResponseEntity<>(
+                                new ApiResponse<>(HttpStatus.CREATED.value(), "Lesson created", lrs),
+                                HttpStatus.CREATED);
+        }
 
-    @GetMapping("/getall")
-    public ResponseEntity<ApiResponse<List<LessonResponse>>> getAllLessons() {
+        @GetMapping("/getall")
+        public ResponseEntity<ApiResponse<List<LessonResponse>>> getAllLessons() {
 
-        List<LessonResponse> lList = lessonService.getAllLessons();
+                List<LessonResponse> lList = lessonService.getAllLessons();
 
-        return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.OK.value(), "Lessons fetched", lList),
-                HttpStatus.OK);
-    }
+                return new ResponseEntity<>(
+                                new ApiResponse<>(HttpStatus.OK.value(), "Lessons fetched", lList),
+                                HttpStatus.OK);
+        }
 
-    @GetMapping("/get/{lessonId}")
-    public ResponseEntity<ApiResponse<LessonResponse>> getLessonById(
-            @PathVariable Long lessonId) {
+        @GetMapping ("/getall/{courseId}")
+        public ResponseEntity<ApiResponse<List<LessonResponse>>> getByCourse_CourseIdOrderBySequenceNumberAsc(
+                       @PathVariable  Long courseId) {
+                        List<LessonResponse> lList = lessonService.getByCourse_CourseIdOrderBySequenceNumberAsc(courseId);
+                        return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "all lessons", lList),HttpStatus.OK);
+        }
 
-        LessonResponse lrs = lessonService.getLessonById(lessonId);
+        @GetMapping("/get/{lessonId}")
+        public ResponseEntity<ApiResponse<LessonResponse>> getLessonById(
+                        @PathVariable Long lessonId) {
 
-        return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.OK.value(), "Lesson fetched", lrs),
-                HttpStatus.OK);
-    }
+                LessonResponse lrs = lessonService.getLessonById(lessonId);
 
-    @PutMapping("/update/{lessonId}")
-    public ResponseEntity<ApiResponse<LessonResponse>> updateLesson(
-            @PathVariable Long lessonId,
-           @Valid @RequestBody LessonRequest lr) {
+                return new ResponseEntity<>(
+                                new ApiResponse<>(HttpStatus.OK.value(), "Lesson fetched", lrs),
+                                HttpStatus.OK);
+        }
 
-        LessonResponse lrs = lessonService.updateLesson(lessonId, lr);
+        @PutMapping("/update/{lessonId}")
+        public ResponseEntity<ApiResponse<LessonResponse>> updateLesson(
+                        @PathVariable Long lessonId,
+                        @Valid @RequestBody LessonRequest lr) {
 
-        return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.OK.value(), "Lesson updated", lrs),
-                HttpStatus.OK);
-    }
+                LessonResponse lrs = lessonService.updateLesson(lessonId, lr);
 
-    @DeleteMapping("/delete/{lessonId}")
-    public ResponseEntity<ApiResponse<String>> deleteLesson(
-            @PathVariable Long lessonId) {
+                return new ResponseEntity<>(
+                                new ApiResponse<>(HttpStatus.OK.value(), "Lesson updated", lrs),
+                                HttpStatus.OK);
+        }
 
-        lessonService.deleteLesson(lessonId);
+        @DeleteMapping("/delete/{lessonId}")
+        public ResponseEntity<ApiResponse<String>> deleteLesson(
+                        @PathVariable Long lessonId) {
 
-        return new ResponseEntity<>(
-                new ApiResponse<>(HttpStatus.NO_CONTENT.value(), "Lesson deleted", null),
-                HttpStatus.NO_CONTENT);
-    }
+                lessonService.deleteLesson(lessonId);
 
-    @GetMapping ("/getlessonbycourseid/{courseId}")
-    public ResponseEntity<ApiResponse<List<LessonResponse>>> getLessonsByCourseId(
-        @PathVariable Long courseId){
-        List<LessonResponse> lrs = lessonService.getLessonByCourseId(courseId);
-        return  new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(),"All lessons", lrs),HttpStatus.OK);
-    }
+                return new ResponseEntity<>(
+                                new ApiResponse<>(HttpStatus.NO_CONTENT.value(), "Lesson deleted", null),
+                                HttpStatus.NO_CONTENT);
+        }
+
+        @GetMapping("/getlessonbycourseid/{courseId}")
+        public ResponseEntity<ApiResponse<List<LessonResponse>>> getLessonsByCourseId(
+                        @PathVariable Long courseId) {
+                List<LessonResponse> lrs = lessonService.getLessonByCourseId(courseId);
+                return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "All lessons", lrs),
+                                HttpStatus.OK);
+        }
 }

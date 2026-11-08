@@ -11,6 +11,7 @@ public class LessonResponse {
     private Long lessonId;
     private String title;
     private String content;
+    private Integer sequenceNumber;
     private String videoUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

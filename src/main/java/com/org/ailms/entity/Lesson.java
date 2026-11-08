@@ -23,6 +23,8 @@ public class Lesson {
     private Long lessonId;
     @Column (unique = true,nullable = false)
     private String title;
+    @Column(nullable = false)
+    private Integer sequenceNumber;
     @Column (nullable = false)
     private String content;
     @Column (unique = true,nullable = false)

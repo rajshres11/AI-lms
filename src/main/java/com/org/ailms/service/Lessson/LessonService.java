@@ -11,5 +11,6 @@ public interface LessonService {
     public LessonResponse getLessonById(Long lessonId);
     public LessonResponse updateLesson(Long lessonId,LessonRequest lr);
     public void deleteLesson(Long lessonId);
+    public List<LessonResponse> getByCourse_CourseIdOrderBySequenceNumberAsc(Long courseId);
     public List<LessonResponse> getLessonByCourseId(Long courseId);
 }

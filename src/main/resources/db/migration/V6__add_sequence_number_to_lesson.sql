@@ -1,0 +1,2 @@
+ALTER TABLE lesson
+ADD COLUMN sequence_number INT NOT NULL DEFAULT 0;
