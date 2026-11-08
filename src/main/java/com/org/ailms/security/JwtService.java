@@ -24,9 +24,17 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails){
+
+        Long expirationTime = userDetails.getAuthorities()
+                .stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_ADMIN"))
+                ? 1000L * 60 * 60
+                : 1000L * 60 * 60 * 2;
+                
         return Jwts.builder().subject(userDetails.getUsername())
         .issuedAt(new Date())
-        .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15))
+        .expiration(new Date(System.currentTimeMillis() + expirationTime))
         .signWith(getSecretKey())
         .compact();
 
