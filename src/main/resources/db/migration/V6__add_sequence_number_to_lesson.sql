@@ -1,2 +1,2 @@
-ALTER TABLE lesson
+ALTER TABLE lessons
 ADD COLUMN sequence_number INT NOT NULL DEFAULT 0;
