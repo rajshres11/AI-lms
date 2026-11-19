@@ -120,14 +120,25 @@ public class EnrollmentServiceImp implements EnrollmentService {
     public List<EnrollmentResponse> getAllEnrollmentByUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User currentUser = userRepository.findByEmail(username).orElseThrow(()-> new UserNotFoundException()); 
+        User currentUser = userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundException());
 
         // if (currentUser.getRole().equals(Role.STUDENT)) {
-        //     if (!currentUser.getUserId().equals(userId)) {
-        //         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't access antoher user data");
-        //     }
+        // if (!currentUser.getUserId().equals(userId)) {
+        // throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't access
+        // antoher user data");
         // }
-        List<Enrollment> enrollments = enrollmentRepository.findByStudent_UserId(currentUser.getUserId());
+        // }
+
+        List<Enrollment> enrollments;
+        if (currentUser.getRole() == Role.ADMIN) {
+            // Admin can see all enrollments
+            enrollments = enrollmentRepository.findAll();
+        } else {
+            // Student can see only their own enrollments
+            enrollments = enrollmentRepository.findByStudent_UserId(
+                    currentUser.getUserId());
+        }
+        
         if (enrollments.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No enrollment on this user till now");
         }
