@@ -92,12 +92,12 @@ public class EnrollmentController {
     }
 
     // Get Enrollments By User ID
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user/my")
     public ResponseEntity<ApiResponse<List<EnrollmentResponse>>> getAllEnrollmentByUserId(
-            @PathVariable Long userId) {
+            ) {
 
         List<EnrollmentResponse> res =
-                enrollmentService.getAllEnrollmentByUserId(userId);
+                enrollmentService.getAllEnrollmentByUserId();
 
         return new ResponseEntity<>(
                 new ApiResponse<>(

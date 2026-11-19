@@ -51,7 +51,7 @@ public class LessonController {
 
         @GetMapping ("/getall/{courseId}")
         public ResponseEntity<ApiResponse<List<LessonResponse>>> getByCourse_CourseIdOrderBySequenceNumberAsc(
-                       @PathVariable  Long courseId) {
+                       @PathVariable Long courseId) {
                         List<LessonResponse> lList = lessonService.getByCourse_CourseIdOrderBySequenceNumberAsc(courseId);
                         return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "all lessons", lList),HttpStatus.OK);
         }

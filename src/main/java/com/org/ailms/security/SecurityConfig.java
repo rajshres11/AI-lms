@@ -58,7 +58,7 @@ public class SecurityConfig {
                         .hasAnyRole("ADMIN", "STUDENT")
 
                         // Student + Admin can see user's enrollments
-                        .requestMatchers("/api/v1/enrollment/user/**")
+                        .requestMatchers("/api/v1/enrollment/user/my")
                         .hasAnyRole("ADMIN", "STUDENT")
 
                         // Other enrollment operations - Admin
@@ -66,6 +66,9 @@ public class SecurityConfig {
                         .hasRole("ADMIN")
 
                         .requestMatchers("/api/v1/lesson/getlessonbycourseid/**")
+                        .hasAnyRole("ADMIN", "STUDENT")
+
+                        .requestMatchers(HttpMethod.GET, "/api/v1/lesson/getall/**")
                         .hasAnyRole("ADMIN", "STUDENT")
 
                         // Lesson - Admin

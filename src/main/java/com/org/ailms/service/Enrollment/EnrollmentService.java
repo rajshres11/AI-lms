@@ -11,5 +11,5 @@ public interface EnrollmentService {
     public void deleteEnrollment(Long enrollmentId);
     public EnrollmentResponse updateStatus(Long enrollmentId,EnrollmentStatusRequest esr);
     public List<EnrollmentResponse> getAllEnrollment();
-     public List<EnrollmentResponse> getAllEnrollmentByUserId(Long userId);
+     public List<EnrollmentResponse> getAllEnrollmentByUserId();
 }

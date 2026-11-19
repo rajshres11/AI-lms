@@ -117,9 +117,18 @@ public class EnrollmentServiceImp implements EnrollmentService {
     }
 
     @Override
-    public List<EnrollmentResponse> getAllEnrollmentByUserId(Long userId) {
-        List<Enrollment> enrollments = enrollmentRepository.findByStudent_UserId(userId);
-        if (enrollments == null) {
+    public List<EnrollmentResponse> getAllEnrollmentByUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User currentUser = userRepository.findByEmail(username).orElseThrow(()-> new UserNotFoundException()); 
+
+        // if (currentUser.getRole().equals(Role.STUDENT)) {
+        //     if (!currentUser.getUserId().equals(userId)) {
+        //         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't access antoher user data");
+        //     }
+        // }
+        List<Enrollment> enrollments = enrollmentRepository.findByStudent_UserId(currentUser.getUserId());
+        if (enrollments.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No enrollment on this user till now");
         }
         List<EnrollmentResponse> ersList = new ArrayList<>();
