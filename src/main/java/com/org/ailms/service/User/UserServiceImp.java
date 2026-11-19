@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -51,20 +50,20 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public UserResponse getUserById(Long userId) {
+    public UserResponse getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String username = authentication.getName();
 
         User currentUser = userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundException());
 
-        if (currentUser.getRole().equals(Role.STUDENT)) {
-            if (!currentUser.getUserId().equals(userId)) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't access antoher user data");
-            }
-        }
+        // if (currentUser.getRole().equals(Role.STUDENT)) {
+        //     if (!currentUser.getUserId().equals(userId)) {
+        //         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't access antoher user data");
+        //     }
+        // }
         User saved = userRepository
-                .findById(userId)
+                .findById(currentUser.getUserId())
                 .orElseThrow(() -> new UserNotFoundException());
 
         UserResponse res = new UserResponse();
@@ -79,18 +78,18 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public UserResponse updateUser(Long userId, UserRequest req) {
+    public UserResponse updateUser(UserRequest req) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User currentUser = userRepository.findByEmail(username).orElseThrow(() -> new UserNotFoundException());
-        if (currentUser.getRole().equals(Role.STUDENT)
-                && !currentUser.getUserId().equals(userId)) {
+        // if (currentUser.getRole().equals(Role.STUDENT)
+        //         && !currentUser.getUserId().equals(userId)) {
 
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,
-                    "You can't update another user's data");
-        }
-        User saved = userRepository.findById(userId)
+        //     throw new ResponseStatusException(
+        //             HttpStatus.FORBIDDEN,
+        //             "You can't update another user's data");
+        // }
+        User saved = userRepository.findById(currentUser.getUserId())
                 .orElseThrow(() -> new UserNotFoundException());
         saved.setName(req.getName());
         saved.setEmail(req.getEmail());
@@ -102,7 +101,7 @@ public class UserServiceImp implements UserService {
         User updated = userRepository.save(saved);
 
         UserResponse res = new UserResponse();
-        res.setUserId(userId);
+        res.setUserId(saved.getUserId());
         res.setName(updated.getName());
         res.setEmail(updated.getEmail());
         res.setPhone(updated.getPhone());

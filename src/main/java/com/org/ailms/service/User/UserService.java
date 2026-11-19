@@ -7,7 +7,7 @@ import com.org.ailms.dto.UserResponse;
 
 public interface UserService {
     public List<UserResponse> getAllUsers();
-    public UserResponse getUserById(Long userId);
-    public UserResponse updateUser(Long userId,UserRequest req);
+    public UserResponse getUser();
+    public UserResponse updateUser(UserRequest req);
     public void deleteUser(Long userId);
 }

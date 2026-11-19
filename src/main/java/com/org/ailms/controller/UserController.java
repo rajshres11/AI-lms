@@ -41,16 +41,16 @@ public class UserController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    @GetMapping("get/{userId}")
-    public ResponseEntity<ApiResponse<UserResponse>> findByUserId(@PathVariable Long userId) {
-        UserResponse res = userService.getUserById(userId);
+    @GetMapping("get/my")
+    public ResponseEntity<ApiResponse<UserResponse>> findByUserId() {
+        UserResponse res = userService.getUser();
         return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "User data fetched", res), HttpStatus.OK);
     }
 
-    @PutMapping("/update/{userId}")
-    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable Long userId,
+    @PutMapping("/update/my")
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(
           @Valid @RequestBody UserRequest req) {
-        UserResponse res = userService.updateUser(userId, req);
+        UserResponse res = userService.updateUser(req);
 
         return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "User updated", res), HttpStatus.OK);
     }
